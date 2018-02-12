@@ -1,0 +1,21 @@
+parameters:
+  kernel.root_dir: ''
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    SonataGenerator\:
+        resource: '../src/*'
+        exclude: '../src/{Resources,SonataGeneratorBundle.php}'
+
+    sonata.admin.generator:
+      class: SonataGenerator\Service\SonataAdminGenerator
+
+    SonataGenerator\Command\GenerateSonataAdminCommand:
+      arguments: ['@monolog.logger.sonata_console', '@sonata.admin.generator', '%kernel.root_dir%']
+      tags:
+            - { name: 'console.command', command: 'generate:sonata-admin' }
+
