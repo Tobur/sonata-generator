@@ -118,11 +118,7 @@ class GenerateSonataAdminCommand extends Command
             ->setPathToEntities($pathToEntities)
             ->setRootDir($this->rootDir)
             ->generateAdminClasses($this->logger)
-            ->generateServiceYml();
-
-        foreach ($servicesYml as $serviceYml) {
-            print_r($serviceYml);
-        }
+            ->generateServiceYml($this->logger);
     }
 
     /**

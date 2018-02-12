@@ -2,8 +2,8 @@
 
 namespace SonataGenerator;
 
+use SonataGenerator\DependencyInjection\SonataGeneratorExtension;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Welp\MailchimpBundle\DependencyInjection\SonataGeneratorExtension;
 
 class SonataGeneratorBundle extends Bundle
 {

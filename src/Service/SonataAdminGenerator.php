@@ -3,12 +3,14 @@
 namespace SonataGenerator\Service;
 
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Yaml\Exception\ParseException;
+use Symfony\Component\Yaml\Yaml;
 use Twig_Environment as Environment;
 
 class SonataAdminGenerator
 {
-    const TEMPLATE_PATH_FOR_CLASS = 'Generator/sonata_admin_class.html.twig';
-    const TEMPLATE_PATH_FOR_SERVICE = 'Generator/sonata_admin_service.html.twig';
+    const TEMPLATE_PATH_FOR_CLASS = 'SonataGeneratorBundle:Generator:sonata_admin_class.html.twig';
+    const TEMPLATE_PATH_FOR_SERVICE = 'SonataGeneratorBundle:Generator:sonata_admin_service.html.twig';
     const SONATA_CLASS_NAME = 'Admin';
 
     /**
@@ -37,11 +39,17 @@ class SonataAdminGenerator
     protected $mainNamespace;
 
     /**
+     * @var string
+     */
+    protected $pathToAdminYaml;
+
+    /**
      * @param Environment $templateEngine
      */
-    public function __construct(Environment $templateEngine)
+    public function __construct(Environment $templateEngine, $pathToAdminYaml)
     {
         $this->templateEngine = $templateEngine;
+        $this->pathToAdminYaml = $pathToAdminYaml;
     }
 
     /**
@@ -156,27 +164,57 @@ class SonataAdminGenerator
      * @return array
      * @throws \Twig_Error
      */
-    public function generateServiceYml(): array
+    public function generateServiceYml(LoggerInterface $logger): SonataAdminGenerator
     {
-        $data = [];
-        foreach ($this->pathToEntities as $entity) {
-            $data[] = $this->templateEngine->render(
-                static::TEMPLATE_PATH_FOR_SERVICE,
-                [
-                    'service_name' => strtolower($this->getClassName($entity)),
-                    'admin_class' => sprintf('%s\%s%s',
-                        $this->getAdminControllerNamespace(),
-                        $this->getClassName($entity),
-                        static::SONATA_CLASS_NAME
-                    ),
-                    'entity_path' => $entity,
-                    'label' => $this->getClassName($entity),
-                    'group' => 'Default', //@TODO use it like parameter ?
-                ]
-            );
+
+        $pathToAdmin =  $this->rootDir . '/../' . $this->pathToAdminYaml;
+
+        try {
+            $yamlData = Yaml::parseFile($pathToAdmin);
+        } catch (ParseException $e) {
+            $logger->critical(printf('Unable to parse the YAML string: %s', $e->getMessage()));
         }
 
-        return $data;
+        $services = $yamlData['services'];
+
+        foreach ($this->pathToEntities as $entity) {
+
+            $serviceName = $this->camelCaseToUnderscore($this->getClassName($entity));
+
+            if (!isset($services[$serviceName])) {
+                $logger->warning(
+                    sprintf(
+                        'Such service %s alredy defined at the file: %s',
+                        $serviceName,
+                        $pathToAdmin
+                    )
+                );
+
+                continue;
+            }
+
+            $services[$serviceName] = [
+                'class' => sprintf('%s\%s%s',
+                    $this->getAdminControllerNamespace(),
+                    $this->getClassName($entity),
+                    static::SONATA_CLASS_NAME
+                ),
+                'arguments' => ['~', $entity, '~'],
+                'tags' => [
+                    'name' => 'sonata.admin',
+                    'manager_type' => 'orm',
+                    'label' => $this->getClassName($entity),
+                    'group' => 'Default',
+                ]
+            ];
+
+        }
+
+        $yamlData['services'] = $services;
+        file_put_contents($pathToAdmin,  Yaml::dump($yamlData, 4, 4, Yaml::DUMP_OBJECT_AS_MAP));
+        $logger->info('Successfully generated sonata services yaml: ' . $pathToAdmin);
+
+        return $this;
     }
 
 
@@ -234,5 +272,14 @@ class SonataAdminGenerator
                 $this->adminControllerNamespace
             )
         );
+    }
+
+    /**
+     * @param string $input
+     * @return string
+     */
+    function camelCaseToUnderscore(string $input)
+    {
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $input));
     }
 }
