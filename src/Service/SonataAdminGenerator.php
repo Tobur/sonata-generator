@@ -215,7 +215,7 @@ class SonataAdminGenerator
                     $this->getClassName($entity),
                     static::SONATA_CLASS_NAME
                 ),
-                'arguments' => ['~', $entity, '~'],
+                'arguments' => ['', $entity, ''],
                 'tags' => [[
                     'name' => 'sonata.admin',
                     'manager_type' => 'orm',
