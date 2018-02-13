@@ -75,6 +75,12 @@ class GenerateSonataAdminCommand extends Command
                 'Fetch entity interactive from folder which you specify in entity argument.
                  Possible value 1 or 0'
             )
+            ->addArgument(
+                'force',
+                InputArgument::OPTIONAL,
+                'Rewrite services and classes'
+            )
+
         ;
     }
 
@@ -94,6 +100,7 @@ class GenerateSonataAdminCommand extends Command
         $entity = $input->getArgument('entity');
         $adminPath =  $input->getArgument('admin-path');
         $fetchEntityInteractive = boolval($input->getArgument('fetch-entity-interactive'));
+        $force = boolval($input->getArgument('fetch-entity-interactive'));
 
         if (false === $fetchEntityInteractive) {
             if (!class_exists($entity)) {
@@ -117,6 +124,7 @@ class GenerateSonataAdminCommand extends Command
             ->setAdminControllerNamespace($adminPath)
             ->setPathToEntities($pathToEntities)
             ->setRootDir($this->rootDir)
+            ->setForce($force)
             ->generateAdminClasses($this->logger)
             ->generateServiceYml($this->logger);
     }

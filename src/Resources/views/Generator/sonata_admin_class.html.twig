@@ -34,6 +34,7 @@ class {{ className }} extends AbstractAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
+        $listMapper->add('id');
     {% for field in fields %}
     $listMapper->add('{{field}}');
     {% endfor %}

@@ -1,5 +1,0 @@
-admin.{{ service_name }}:
-    class: {{ admin_class }}
-    arguments: [~, {{ entity_path }}, ~]
-    tags:
-        - { name: sonata.admin, manager_type: orm, label: {{ label }}, group: {{ group }}}

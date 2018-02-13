@@ -44,6 +44,11 @@ class SonataAdminGenerator
     protected $pathToAdminYaml;
 
     /**
+     * @var bool
+     */
+    protected $force = false;
+
+    /**
      * @param Environment $templateEngine
      */
     public function __construct(Environment $templateEngine, $pathToAdminYaml)
@@ -59,6 +64,17 @@ class SonataAdminGenerator
     public function setPathToEntities(array $pathToEntities): SonataAdminGenerator
     {
         $this->pathToEntities = $pathToEntities;
+
+        return $this;
+    }
+
+    /**
+     * @param bool $force
+     * @return SonataAdminGenerator
+     */
+    public function setForce(bool $force): SonataAdminGenerator
+    {
+        $this->force = $force;
 
         return $this;
     }
@@ -140,7 +156,7 @@ class SonataAdminGenerator
                 static::SONATA_CLASS_NAME
             );
 
-            if (file_exists($pathToNewSonataClass)) {
+            if (file_exists($pathToNewSonataClass) && $this->force === false) {
                 $logger->warning(
                     sprintf(
                         'Class(%s) already exist please remove it! if you want to generate new one',
@@ -179,9 +195,9 @@ class SonataAdminGenerator
 
         foreach ($this->pathToEntities as $entity) {
 
-            $serviceName = $this->camelCaseToUnderscore($this->getClassName($entity));
+            $serviceName = 'admin.' . $this->camelCaseToUnderscore($this->getClassName($entity));
 
-            if (!isset($services[$serviceName])) {
+            if (!isset($services[$serviceName]) && $this->force === false) {
                 $logger->warning(
                     sprintf(
                         'Such service %s alredy defined at the file: %s',
@@ -200,12 +216,12 @@ class SonataAdminGenerator
                     static::SONATA_CLASS_NAME
                 ),
                 'arguments' => ['~', $entity, '~'],
-                'tags' => [
+                'tags' => [[
                     'name' => 'sonata.admin',
                     'manager_type' => 'orm',
                     'label' => $this->getClassName($entity),
                     'group' => 'Default',
-                ]
+                ]]
             ];
 
         }
