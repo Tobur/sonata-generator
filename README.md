@@ -1,29 +1,9 @@
 **SETUP**
 
-Add repository to your composer.json
+Run
 ```
-    "repositories": [
-        .....
-        {
-            "type": "git",
-            "url": "https://github.com/Tobur/sonata-generator",
-            "reference": "master"
-        }
-        ....
-    ]
+composer require tobur/sonata-generator
 ```   
-Then add required to you composer.json
-
-```
-"sonata-generator": "dev-master",
-```
-
-Update it:
-
-```
-php composer update
-```    
-
 Create monolog chanel:
 
 ```
