@@ -10,8 +10,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SonataGenerator\\": "src/",
-            "App\\": "./../../../src"
+            "": "src/"
         }
     }
 }
