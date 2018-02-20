@@ -1,5 +1,5 @@
 {
-    "name": "sonata-generator",
+    "name": "tobur/sonata-generator",
     "type": "symfony-bundle",
     "require": {
         "php": ">=7.1.3",
