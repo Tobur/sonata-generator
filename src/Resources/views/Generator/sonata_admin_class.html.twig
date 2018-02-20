@@ -6,12 +6,13 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Show\ShowMapper;
 
 class {{ className }} extends AbstractAdmin
 {
-    /**
-     * @param FormMapper $formMapper
-     */
+   /**
+    * @param FormMapper $formMapper
+    */
     protected function configureFormFields(FormMapper $formMapper)
     {
     {% for field in fields %}
@@ -19,9 +20,9 @@ class {{ className }} extends AbstractAdmin
     {% endfor %}
 }
 
-    /**
-     * @param DatagridMapper $datagridMapper
-     */
+   /**
+    * @param DatagridMapper $datagridMapper
+    */
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
     {% for field in fields %}
@@ -29,14 +30,31 @@ class {{ className }} extends AbstractAdmin
     {% endfor %}
 }
 
-    /**
-     * @param ListMapper $listMapper
-     */
+   /**
+    * @param ListMapper $listMapper
+    */
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper->addIdentifier('id');
     {% for field in fields %}
     $listMapper->add('{{field}}');
+    {% endfor %}
+        $listMapper->add('_action', null, [
+            'actions' => [
+                'show' => [],
+                'edit' => [],
+                'delete' => []
+            ]
+        ]);
+}
+
+   /**
+    * @param ShowMapper $showMapper
+    */
+    protected function configureShowFields(ShowMapper $showMapper)
+    {
+    {% for field in fields %}
+    $showMapper->add('{{field}}');
     {% endfor %}
 }
 }
