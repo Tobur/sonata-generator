@@ -1,0 +1,2 @@
+sonata_generator:
+  path_to_admin_yaml: 'config/packages/sonata_generator_admin.yaml'
