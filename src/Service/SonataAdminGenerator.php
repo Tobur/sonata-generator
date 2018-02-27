@@ -197,7 +197,7 @@ class SonataAdminGenerator
 
             $serviceName = 'admin.' . $this->camelCaseToUnderscore($this->getClassName($entity));
 
-            if (!isset($services[$serviceName]) && $this->force === false) {
+            if (isset($services[$serviceName]) && $this->force === false) {
                 $logger->warning(
                     sprintf(
                         'Such service %s alredy defined at the file: %s',
