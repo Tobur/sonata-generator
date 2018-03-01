@@ -62,12 +62,12 @@ class GenerateSonataAdminCommand extends Command
             ->addArgument(
                 'entity',
                 InputArgument::REQUIRED,
-                'Path to Entity. Example App\Entity\Post'
+                'Path to Entity. Example "App\Entity\Post"'
             )
             ->addArgument(
                 'admin-path',
                 InputArgument::REQUIRED,
-                'Path to You Admin. Example App\Admin\ or App\Controller\Admin\\'
+                'Path to You Admin. Example "App\Admin\" or "App\Controller\Admin\\"'
             )
             ->addArgument(
                 'fetch-entity-interactive',
