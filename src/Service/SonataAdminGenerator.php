@@ -156,15 +156,17 @@ class SonataAdminGenerator
                 static::SONATA_CLASS_NAME
             );
 
-            if (file_exists($pathToNewSonataClass) && $this->force === false) {
-                $logger->warning(
-                    sprintf(
-                        'Class(%s) already exist please remove it! if you want to generate new one',
-                        $pathToNewSonataClass
-                    )
-                );
+            if ($this->force === false) {
+                if (file_exists($pathToNewSonataClass)) {
+                    $logger->warning(
+                        sprintf(
+                            'Class(%s) already exist please remove it! if you want to generate new one',
+                            $pathToNewSonataClass
+                        )
+                    );
 
-                continue;
+                    continue;
+                }
             }
 
 
@@ -197,16 +199,18 @@ class SonataAdminGenerator
 
             $serviceName = 'admin.' . $this->camelCaseToUnderscore($this->getClassName($entity));
 
-            if (isset($services[$serviceName]) && $this->force === false) {
-                $logger->warning(
-                    sprintf(
-                        'Such service %s alredy defined at the file: %s',
-                        $serviceName,
-                        $pathToAdmin
-                    )
-                );
+            if ($this->force === false) {
+                if (isset($services[$serviceName])) {
+                    $logger->warning(
+                        sprintf(
+                            'Such service %s alredy defined at the file: %s',
+                            $serviceName,
+                            $pathToAdmin
+                        )
+                    );
 
-                continue;
+                    continue;
+                }
             }
 
             $services[$serviceName] = [
